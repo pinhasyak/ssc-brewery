@@ -1,9 +1,11 @@
 package guru.sfg.brewery.config;
 
+import guru.sfg.brewery.security.RestHeaderAuthFilter;
 import org.springframework.cglib.proxy.NoOp;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -16,23 +18,40 @@ import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.util.matcher.AndRequestMatcher;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
+    RestHeaderAuthFilter restHeaderAuthFilter(AuthenticationManager authenticationManager){
+        RestHeaderAuthFilter restHeaderAuthFilter = new RestHeaderAuthFilter(new AntPathRequestMatcher("/api/**"));
+        restHeaderAuthFilter.setAuthenticationManager(authenticationManager);
+        return restHeaderAuthFilter;
+    }
+
     @Override
     protected void configure(HttpSecurity http) throws Exception{
+        http.addFilterBefore(restHeaderAuthFilter(authenticationManager()),
+                UsernamePasswordAuthenticationFilter.class)
+                .csrf().disable();
+
         ((HttpSecurity)((HttpSecurity)((ExpressionUrlAuthorizationConfigurer
                 .AuthorizedUrl)http
                 .authorizeRequests(authorize  -> {
                     authorize
+                            .antMatchers("/h2-console/**").permitAll() //do not use in prod
                             .antMatchers("/", "/webjars/**","/login", "/resources/**").permitAll()
                             .antMatchers("/beers/find", "/beers*").permitAll()
                             .antMatchers(HttpMethod.GET, "/api/v1/beer/**").permitAll()
                             .antMatchers(HttpMethod.GET, "/api/v1/beerupc/{upc}").permitAll();
                 })
                 .authorizeRequests().anyRequest()).authenticated().and()).formLogin().and()).httpBasic();
+
+//        h2 config
+         http.headers().frameOptions().sameOrigin();
     }
 
     @Bean
@@ -40,20 +59,4 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         return PasswordEncoderFactories.createDelegatingPasswordEncoder();
     }
 
-    @Override
-    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.inMemoryAuthentication()
-                .withUser("spring")
-                .password("{bcrypt}$2a$10$1tOrsI0E/0b.d.POEPxuke.58JQjz5tSAAt0hMFMfQUsZL9thM8o2") // guru
-                .roles("ADMIN")
-                .and()
-                .withUser("user")
-                .password("{sha256}138e2cacf1ed106e5e672e5b8b2beacf167fb20a6c53261f407ca98e18bd75d292a7ee769220549d") //password
-                .roles("USER")
-                .and()
-                .withUser("scott")
-                .password("{ldap}{SSHA}QHhVJ9npPLtp/i2YCgJxW99zwuWmWTjxr5NHdg==") //tiger
-                .roles("CUSTOMER");
-
-    }
 }
