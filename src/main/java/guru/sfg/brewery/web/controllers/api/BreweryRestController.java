@@ -15,13 +15,12 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package guru.sfg.brewery.web.controllers;
+package guru.sfg.brewery.web.controllers.api;
 
 import guru.sfg.brewery.domain.Brewery;
 import guru.sfg.brewery.services.BreweryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -30,15 +29,14 @@ import java.util.List;
 
 
 @RequiredArgsConstructor
-@RequestMapping("/brewery")
+@RequestMapping("/api/v1/")
 @Controller
-public class BreweryController {
+public class BreweryRestController {
 
     private final BreweryService breweryService;
 
-    @GetMapping({"/breweries", "/breweries/index", "/breweries/index.html", "/breweries.html"})
-    public String listBreweries(Model model) {
-        model.addAttribute("breweries", breweryService.getAllBreweries());
-        return "breweries/index";
+    @GetMapping(produces = { "application/json" }, path = "breweries")
+    public @ResponseBody List<Brewery> getBreweriesJson(){
+        return breweryService.getAllBreweries();
     }
 }

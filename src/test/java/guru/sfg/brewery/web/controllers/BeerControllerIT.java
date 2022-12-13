@@ -1,14 +1,17 @@
 package guru.sfg.brewery.web.controllers;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.context.SpringBootTest;
 
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.anonymous;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.httpBasic;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@WebMvcTest
+@SpringBootTest
 public class BeerControllerIT extends BaseIT {
 
     @Test
@@ -39,15 +42,15 @@ public class BeerControllerIT extends BaseIT {
     @Test
     void findBeers() throws Exception {
         mockMvc.perform(get("/beers/find"))
-                .andExpect(status().isOk())
-                .andExpect(view().name("beers/findBeers"))
-                .andExpect(model().attributeExists("beer"));
+                .andExpect(status().isUnauthorized());
     }
 
 
-    @Test
-    void findBeersHttpBsic() throws Exception {
-        mockMvc.perform(get("/beers/find").with(anonymous())) // httpBasic("pinhas", "Pinhas")
+    @ParameterizedTest(name = "#{index} with [{arguments}]")
+    @MethodSource("guru.sfg.brewery.web.controllers.BaseIT#getStreamAllUsers")
+    void findBeersHttpBasic(String user, String password) throws Exception {
+        mockMvc.perform(get("/beers/find").with(anonymous())
+                .with(httpBasic(user, password)))
                 .andExpect(status().isOk())
                 .andExpect(view().name("beers/findBeers"))
                 .andExpect(model().attributeExists("beer"));

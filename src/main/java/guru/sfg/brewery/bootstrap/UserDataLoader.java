@@ -30,9 +30,9 @@ public class UserDataLoader implements CommandLineRunner {
     }
 
     private void loadSecurityData() {
-        Authority adminAuthority = authorityRepository.save(Authority.builder().role(Authority.ADMIN).build());
-        Authority userAuthority = authorityRepository.save(Authority.builder().role(Authority.USER).build());
-        Authority customerAuthority = authorityRepository.save(Authority.builder().role(Authority.CUSTOMER).build());
+        Authority adminAuthority = authorityRepository.save(Authority.builder().role(Authority.ROLE_ADMIN).build());
+        Authority userAuthority = authorityRepository.save(Authority.builder().role(Authority.ROLE_USER).build());
+        Authority customerAuthority = authorityRepository.save(Authority.builder().role(Authority.ROLE_CUSTOMER).build());
 
         userRepository.save(User.builder()
                 .username("spring")
