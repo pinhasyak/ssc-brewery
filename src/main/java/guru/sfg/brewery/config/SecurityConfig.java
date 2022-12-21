@@ -38,7 +38,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                     authorize
                             .antMatchers("/h2-console/**").permitAll() //do not use in prod
                             .antMatchers("/", "/webjars/**", "/login", "/resources/**").permitAll()
-
                     ;
                 })
                 .authorizeRequests().anyRequest()).authenticated().and()).formLogin().and()).httpBasic();

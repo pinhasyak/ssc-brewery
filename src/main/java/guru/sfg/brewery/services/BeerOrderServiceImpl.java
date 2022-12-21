@@ -33,6 +33,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -66,6 +68,11 @@ public class BeerOrderServiceImpl implements BeerOrderService {
         }
     }
 
+    @Override
+    public BeerOrderPagedList listOrders(Pageable pageable){
+        return new BeerOrderPagedList(new ArrayList<>());
+    }
+
     @Transactional
     @Override
     public BeerOrderDto placeOrder(UUID customerId, BeerOrderDto beerOrderDto) {
@@ -92,6 +99,12 @@ public class BeerOrderServiceImpl implements BeerOrderService {
     @Override
     public BeerOrderDto getOrderById(UUID customerId, UUID orderId) {
         return beerOrderMapper.beerOrderToDto(getOrder(customerId, orderId));
+    }
+
+    @Override
+    public BeerOrderDto getOrderById(UUID orderId) {
+        BeerOrder beerOrder = beerOrderRepository.findOrderByIdSecure(orderId);
+        return beerOrderMapper.beerOrderToDto(beerOrder);
     }
 
     @Override

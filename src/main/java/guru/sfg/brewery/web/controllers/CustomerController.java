@@ -23,8 +23,6 @@ import guru.sfg.brewery.security.perms.CustomerCreatePermission;
 import guru.sfg.brewery.security.perms.CustomerReadPermission;
 import guru.sfg.brewery.security.perms.CustomerUpdatePermission;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.access.annotation.Secured;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -58,7 +56,7 @@ public class CustomerController {
     public String processFindFormReturnMany(Customer customer, BindingResult result, Model model){
         // find customers by name
         //ToDO: Add Service
-        List<Customer> customers = customerRepository.findAllByCustomerNameLike("%" + customer.getCustomerName() + "%");
+        List<Customer> customers = customerRepository.findCustomersByCustomerNameIsLike("%" + customer.getCustomerName() + "%");
         if (customers.isEmpty()) {
             // no customers found
             result.rejectValue("customerName", "notFound", "not found");

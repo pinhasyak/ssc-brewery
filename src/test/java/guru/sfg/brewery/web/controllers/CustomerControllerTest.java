@@ -81,7 +81,7 @@ class CustomerControllerTest {
     @Test
     @Disabled
     void processFindFormReturnMany() throws Exception{
-        when(customerRepository.findAllByCustomerNameLike("John Doe")).thenReturn(customerList);
+        when(customerRepository.findCustomersByCustomerNameIsLike("John Doe")).thenReturn(customerList);
 
         mockMvc.perform(get("/customers"))
                 .andExpect(status().isOk())
