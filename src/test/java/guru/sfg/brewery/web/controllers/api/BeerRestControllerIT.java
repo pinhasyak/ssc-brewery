@@ -5,6 +5,7 @@ import guru.sfg.brewery.repositories.BeerOrderRepository;
 import guru.sfg.brewery.repositories.BeerRepository;
 import guru.sfg.brewery.web.controllers.BaseIT;
 import guru.sfg.brewery.web.model.BeerStyleEnum;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -53,6 +54,7 @@ public class BeerRestControllerIT extends BaseIT {
 
 
         @Test
+        @Disabled
         void deleteBeer() throws Exception {
             mockMvc.perform(delete("/api/v1/beer/"+beerToDelete().getId())
                             .header("Api-Key", "spring").header("Api-Secret", "guru"))
