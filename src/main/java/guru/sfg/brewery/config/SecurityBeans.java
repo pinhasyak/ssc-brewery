@@ -14,6 +14,11 @@ import javax.sql.DataSource;
 public class SecurityBeans {
 
     @Bean
+    public AuthenticationEventPublisher authenticationEventPublisher(ApplicationEventPublisher applicationEventPublisher){
+        return new DefaultAuthenticationEventPublisher(applicationEventPublisher);
+    }
+
+    @Bean
     public PersistentTokenRepository persistentTokenRepository(DataSource dataSource){
         JdbcTokenRepositoryImpl jdbcTokenRepository = new JdbcTokenRepositoryImpl();
         jdbcTokenRepository.setDataSource(dataSource);

@@ -3,12 +3,15 @@ package guru.sfg.brewery.domain.security;
 import guru.sfg.brewery.domain.Customer;
 import lombok.*;
 import lombok.experimental.Accessors;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.security.core.CredentialsContainer;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
+import java.sql.Timestamp;
 import java.util.Collection;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -65,4 +68,11 @@ public class User implements UserDetails, CredentialsContainer {
                 .map(authority -> new SimpleGrantedAuthority(authority.getPermission()))
                 .collect(Collectors.toSet());
     }
+
+    @CreationTimestamp
+    @Column(updatable = false)
+    private Timestamp createdDate;
+
+    @UpdateTimestamp
+    private Timestamp lastModifiedDate;
 }
